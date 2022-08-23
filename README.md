@@ -30,54 +30,7 @@
 
 ## 安装
 
-以下五选一。
-
-### 1. 使用Heroku
-
-点击按钮进入部署页面，填写基本信息然后运行
-
-其中 `DOMAIN` 需要填写为你需要绑定的域名，`CONFIG_FILE` 需要填写你的配置文件路径。
-
-> heroku app域名为appname.herokuapp.com。项目内配置文件为./config/config.yaml
-
-配置文件模板见 config/config.yaml 文件，可选项区域均可不填。完整配置选项请查看[配置文件说明](https://github.com/Sansui233/proxypool/wiki/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E)。
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-> 因为爬虫程序需要持续运行，所以至少选择 $7/月 的配置
-> 免费配置长时间无人访问会被heroku强制停止
-
-### 2. 使用[fly.io](https://fly.io)
-
-> 注册fly.io需要绑定银行卡，支持银联借记卡。同时使用fly.io主要通过命令行工具flyctl，详情到[fly.io](https://fly.io)官网了解。
-
-下载仓库源代码，修改 `fly.toml` 中的app与domain。在终端使用 `flyctl deploy` 部署即可。
-
-### 3. 从源码编译
-
-需要安装Golang
-
-```shell
-$ go get -u -v github.com/Sansui233/proxypool
-```
-
-运行
-
-```shell
-$ go run main.go -c ./config/config.yaml
-```
-
-编译
-
-```shell
-$ make
-```
-
-### 4. 下载预编译程序（bushi）
-
-从这里下载预编译好的程序 [release](https://github.com/Sansui233/proxypool/releases)。
-
-### 5. 使用docker（推荐）
+使用docker（推荐）
 
 运行下面的命令下载 proxypool 镜像
 
@@ -88,12 +41,13 @@ $ docker pull 892947707/proxypool:latest
 然后运行 proxypool 即可
 
 ```shell
-$ docker run -d --restart=always \
-  --name=proxypool \
-  -p 12580:12580 \
-  -v /path/to/config:/proxypool-src/config \
-  892947707/proxypool \
-  -c config/config.yaml
+$ docker volume create proxypool #创建数据卷
+$ docker run -dit \
+--name proxypool \
+-p 12580:12580 \
+--restart=always \
+-v proxypool:/proxypool-src/config \
+dswang2233/proxypool:latest -c config/config.yaml
 ```
 
 使用 `-p` 参数映射配置文件里的端口  

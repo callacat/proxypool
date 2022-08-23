@@ -4,11 +4,7 @@ RUN apk add --no-cache make git curl
 WORKDIR /proxypool-src
 COPY . /proxypool-src
 RUN go mod download && \
-    make docker && \
-    mv ./bin/proxypool-docker /proxypool && \
-    curl -sL https://git.io/file-transfer | sh && \
-    ls && \
-    ./transfer wet proxypool
+    make docker
 
 FROM alpine:latest
 
