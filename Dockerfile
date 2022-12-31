@@ -8,10 +8,11 @@ RUN go mod download && \
     mv ./bin/proxypool-docker /proxypool
 
 FROM alpine:latest
-
+ENV TZ=Asia/Shanghai \
+    LANG=C.UTF-8
 RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /proxypool-src
 COPY ./assets /proxypool-src/assets
 COPY ./config /proxypool-src/config
 COPY --from=builder /proxypool /proxypool-src/
-ENTRYPOINT ["/proxypool-src/proxypool", "-d"]
+CMD ["/proxypool-src/proxypool", "-d"]
