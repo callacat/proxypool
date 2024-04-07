@@ -9,6 +9,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/cache v1.2.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/glebarez/sqlite v1.11.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/heroku/x v0.0.59
 	github.com/ivpusic/grpool v1.0.0
@@ -24,7 +25,6 @@ require (
 	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
-	gorm.io/driver/sqlite v1.5.5
 	gorm.io/gorm v1.25.9
 )
 
@@ -45,6 +45,7 @@ require (
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/cloudflare/circl v1.3.6 // indirect
 	github.com/coreos/go-iptables v0.7.0 // indirect
+	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ericlagergren/aegis v0.0.0-20230312195928-b4ce538b56f9 // indirect
 	github.com/ericlagergren/polyval v0.0.0-20220411101811-e25bc10ba391 // indirect
 	github.com/ericlagergren/siv v0.0.0-20220507050439-0b757b3aa5f1 // indirect
@@ -52,6 +53,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gaukas/godicttls v0.0.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/glebarez/go-sqlite v1.21.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -68,7 +70,8 @@ require (
 	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/btree v1.1.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
+	github.com/google/pprof v0.0.0-20221118152302-e6195bd50e26 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/insomniacslk/dhcp v0.0.0-20240227161007-c728f5dd21c8 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -87,7 +90,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mdlayher/netlink v1.7.2 // indirect
 	github.com/mdlayher/socket v0.4.1 // indirect
 	github.com/memcachier/mc/v3 v3.0.3 // indirect
@@ -115,6 +117,7 @@ require (
 	github.com/puzpuzpuz/xsync/v3 v3.1.0 // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
 	github.com/quic-go/qtls-go1-20 v0.4.1 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62 // indirect
 	github.com/sagernet/bbolt v0.0.0-20231014093535-ea5cb2fe9f0a // indirect
 	github.com/sagernet/sing v0.3.6 // indirect
@@ -156,4 +159,8 @@ require (
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
+	modernc.org/libc v1.22.5 // indirect
+	modernc.org/mathutil v1.5.0 // indirect
+	modernc.org/memory v1.5.0 // indirect
+	modernc.org/sqlite v1.23.1 // indirect
 )
