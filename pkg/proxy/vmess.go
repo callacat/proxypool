@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/metacubex/mihomo/adapter/outbound"
 	"math/rand"
 	"net"
 	"net/url"
@@ -12,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ssrlive/proxypool/pkg/tool"
+	"github.com/timerzz/proxypool/pkg/tool"
 )
 
 var (
@@ -21,131 +23,70 @@ var (
 )
 
 type Vmess struct {
-	Base
-	UUID           string       `yaml:"uuid" json:"uuid"`
-	AlterID        int          `yaml:"alterId" json:"alterId"`
-	Cipher         string       `yaml:"cipher" json:"cipher"`
-	Network        string       `yaml:"network,omitempty" json:"network,omitempty"`
-	ServerName     string       `yaml:"servername,omitempty" json:"servername,omitempty"`
-	HTTPOpts       HTTPOptions  `yaml:"http-opts,omitempty" json:"http-opts,omitempty"`
-	HTTP2Opts      HTTP2Options `yaml:"h2-opts,omitempty" json:"h2-opts,omitempty"`
-	TLS            bool         `yaml:"tls,omitempty" json:"tls,omitempty"`
-	SkipCertVerify bool         `yaml:"skip-cert-verify,omitempty" json:"skip-cert-verify,omitempty"`
-	WSOpts         *WSOptions   `yaml:"ws-opts,omitempty" json:"ws-opts,omitempty"`
+	outbound.VmessOption
+	Country string `proxy:"count"`
+	Usable  bool   `proxy:"usable"`
+	Type    string `proxy:"type,omitempty"`
 }
 
-type WSOptions struct {
-	Path    string            `yaml:"path,omitempty" json:"path,omitempty"`
-	Headers map[string]string `yaml:"headers,omitempty" json:"headers,omitempty"`
+func (v *Vmess) SetName(name string) {
+	v.Name = name
 }
 
-type HTTPOptions struct {
-	Method  string              `yaml:"method,omitempty" json:"method,omitempty"`
-	Path    []string            `yaml:"path,omitempty" json:"path,omitempty"`
-	Headers map[string][]string `yaml:"headers,omitempty" json:"headers,omitempty"`
+func (v *Vmess) AddToName(name string) {
+	v.Name += name
 }
 
-type HTTP2Options struct {
-	Host []string `yaml:"host,omitempty" json:"host,omitempty"`
-	Path string   `yaml:"path,omitempty" json:"path,omitempty"` // 暂只处理一个Path
+func (v *Vmess) SetIP(ip string) {
+	v.Server = ip
 }
 
-func (v *Vmess) UnmarshalJSON(data []byte) error {
-	tmp := struct {
-		Base
-		UUID           string            `yaml:"uuid" json:"uuid"`
-		AlterID        int               `yaml:"alterId" json:"alterId"`
-		Cipher         string            `yaml:"cipher" json:"cipher"`
-		Network        string            `yaml:"network,omitempty" json:"network,omitempty"`
-		ServerName     string            `yaml:"servername,omitempty" json:"servername,omitempty"`
-		HTTPOpts       HTTPOptions       `yaml:"http-opts,omitempty" json:"http-opts,omitempty"`
-		HTTP2Opts      HTTP2Options      `yaml:"h2-opts,omitempty" json:"h2-opts,omitempty"`
-		TLS            bool              `yaml:"tls,omitempty" json:"tls,omitempty"`
-		SkipCertVerify bool              `yaml:"skip-cert-verify,omitempty" json:"skip-cert-verify,omitempty"`
-		WSOpts         WSOptions         `yaml:"ws-opts,omitempty" json:"ws-opts,omitempty"`
-		WSPath         string            `yaml:"ws-path,omitempty" json:"ws-path,omitempty"`
-		WSHeaders      map[string]string `yaml:"ws-headers,omitempty" json:"ws-headers,omitempty"`
-	}{}
+func (v *Vmess) TypeName() string {
+	return v.Type
+}
 
-	err := json.Unmarshal(data, &tmp)
-	if err != nil {
-		return err
+func (v *Vmess) BaseInfo() *Base {
+	return &Base{
+		Name:    v.Name,
+		Server:  v.Server,
+		Type:    v.Type,
+		Country: v.Country,
+		Port:    v.Port,
+		UDP:     v.UDP,
+		Usable:  v.Usable,
 	}
-
-	v.Base = tmp.Base
-	v.UUID = tmp.UUID
-	v.AlterID = tmp.AlterID
-	v.Cipher = tmp.Cipher
-	v.Network = tmp.Network
-	v.ServerName = tmp.ServerName
-	v.HTTPOpts = tmp.HTTPOpts
-	v.HTTP2Opts = tmp.HTTP2Opts
-	v.TLS = tmp.TLS
-	v.SkipCertVerify = tmp.SkipCertVerify
-	if tmp.Network == "ws" {
-		if tmp.WSOpts.Path == "" {
-			tmp.WSOpts.Path = tmp.WSPath
-		}
-		if tmp.WSOpts.Headers == nil {
-			tmp.WSOpts.Headers = tmp.WSHeaders
-		}
-		v.WSOpts = &WSOptions{
-			Path:    tmp.WSOpts.Path,
-			Headers: tmp.WSOpts.Headers,
-		}
-	}
-
-	return nil
 }
 
-func (v Vmess) Identifier() string {
+func (v *Vmess) SetUsable(usable bool) {
+	v.Usable = usable
+}
+
+func (v *Vmess) SetCountry(country string) {
+	v.Country = country
+}
+
+func (v *Vmess) Identifier() string {
 	return net.JoinHostPort(v.Server, strconv.Itoa(v.Port)) + v.Cipher + v.UUID
 }
 
-func (v Vmess) String() string {
-	data, err := json.Marshal(v)
+func (v *Vmess) String() string {
+	data, err := jsoniter.Config{TagKey: "proxy"}.Froze().MarshalToString(v)
+	//data, err := json.Marshal(v)
 	if err != nil {
 		return ""
 	}
-	return string(data)
+	return data
 }
 
-func (v Vmess) ToClash() string {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return ""
-	}
-	return "- " + string(data)
+func (v *Vmess) ToClash() string {
+	return "- " + v.String()
 }
 
-func (v Vmess) ToSurge() string {
-	// node2 = vmess, server, port, username=, ws=true, ws-path=, ws-headers=
-	if v.Network == "ws" && v.WSOpts != nil {
-		wsHeasers := ""
-		for k, v := range v.WSOpts.Headers {
-			if wsHeasers == "" {
-				wsHeasers = k + ":" + v
-			} else {
-				wsHeasers += "|" + k + ":" + v
-			}
-		}
-		text := fmt.Sprintf("%s = vmess, %s, %d, username=%s, ws=true, tls=%t, ws-path=%s",
-			v.Name, v.Server, v.Port, v.UUID, v.TLS, v.WSOpts.Path)
-		if wsHeasers != "" {
-			text += ", ws-headers=" + wsHeasers
-		}
-		return text
-	} else {
-		return fmt.Sprintf("%s = vmess, %s, %d, username=%s, tls=%t",
-			v.Name, v.Server, v.Port, v.UUID, v.TLS)
-	}
+func (v *Vmess) Clone() Proxy {
+	return v
 }
 
-func (v Vmess) Clone() Proxy {
-	return &v
-}
-
-func (v Vmess) Link() (link string) {
+func (v *Vmess) Link() (link string) {
 	vjv, err := json.Marshal(v.toLinkJson())
 	if err != nil {
 		return
@@ -154,20 +95,24 @@ func (v Vmess) Link() (link string) {
 }
 
 type vmessLinkJson struct {
-	Add  string `json:"add"`
-	V    string `json:"v"`
-	Ps   string `json:"ps"`
-	Port int    `json:"port"`
-	Id   string `json:"id"`
-	Aid  string `json:"aid"`
-	Net  string `json:"net"`
-	Type string `json:"type"`
-	Host string `json:"host"`
-	Path string `json:"path"`
-	Tls  string `json:"tls"`
+	Add      string `json:"add"`
+	V        string `json:"v"`
+	Ps       string `json:"ps"`
+	Port     int    `json:"port"`
+	Id       string `json:"id"`
+	Aid      string `json:"aid"`
+	Net      string `json:"net"`
+	Type     string `json:"type"`
+	Host     string `json:"host"`
+	Path     string `json:"path"`
+	Tls      string `json:"tls"`
+	Security string `json:"scy"`
+	SNI      string `json:"sni"`
+	Alpn     string `json:"alpn"`
+	Fp       string `json:"fp"`
 }
 
-func (v Vmess) toLinkJson() vmessLinkJson {
+func (v *Vmess) toLinkJson() vmessLinkJson {
 	vj := vmessLinkJson{
 		Add:  v.Server,
 		Ps:   v.Name,
@@ -181,7 +126,7 @@ func (v Vmess) toLinkJson() vmessLinkJson {
 	if v.TLS {
 		vj.Tls = "tls"
 	}
-	if v.WSOpts != nil {
+	if v.Network == "ws" {
 		vj.Path = v.WSOpts.Path
 		if host, ok := v.WSOpts.Headers["HOST"]; ok && host != "" {
 			vj.Host = host
@@ -239,10 +184,10 @@ func ParseVmessLink(link string) (*Vmess, error) {
 
 		// Transmission protocol
 		wsHeaders := make(map[string]string)
-		h2Opt := HTTP2Options{
+		h2Opt := outbound.HTTP2Options{
 			Host: make([]string, 0),
 		}
-		httpOpt := HTTPOptions{}
+		httpOpt := outbound.HTTPOptions{}
 
 		// Network <- obfs=websocket
 		obfs := moreInfo.Get("obfs")
@@ -292,25 +237,24 @@ func ParseVmessLink(link string) (*Vmess, error) {
 		}
 
 		v := Vmess{
-			Base: Base{
-				Name:   remarks + "_" + strconv.Itoa(rand.Int()),
-				Server: server,
-				Port:   port,
-				Type:   "vmess",
-				UDP:    false,
+			Type: "vmess",
+			VmessOption: outbound.VmessOption{
+				Name:           remarks + "_" + strconv.Itoa(rand.Int()),
+				Server:         server,
+				Port:           port,
+				UUID:           uuid,
+				AlterID:        aid,
+				Cipher:         cipher,
+				Network:        network,
+				TLS:            tls,
+				SkipCertVerify: true,
+				ServerName:     server,
+				HTTPOpts:       httpOpt,
+				HTTP2Opts:      h2Opt,
 			},
-			UUID:           uuid,
-			AlterID:        aid,
-			Cipher:         cipher,
-			TLS:            tls,
-			Network:        network,
-			HTTPOpts:       httpOpt,
-			HTTP2Opts:      h2Opt,
-			SkipCertVerify: true,
-			ServerName:     server,
 		}
 		if v.Network == "ws" {
-			v.WSOpts = &WSOptions{
+			v.WSOpts = outbound.WSOptions{
 				Path:    path,
 				Headers: wsHeaders,
 			}
@@ -343,59 +287,48 @@ func ParseVmessLink(link string) (*Vmess, error) {
 			tls = true
 		}
 
-		wsHeaders := make(map[string]string)
-		h2Opt := HTTP2Options{}
-		httpOpt := HTTPOptions{}
-
-		if vmessJson.Net == "http" {
-			httpOpt.Method = "GET" // 不知道Headers为空时会不会报错
-		}
-
-		if vmessJson.Host != "" {
-			switch vmessJson.Net {
-			case "h2":
-				h2Opt.Host = append(h2Opt.Host, vmessJson.Host) // 不知道为空时会不会报错
-			case "ws":
-				wsHeaders["HOST"] = vmessJson.Host
-			}
-		}
-
-		if vmessJson.Path == "" {
-			vmessJson.Path = "/"
-		}
-		switch vmessJson.Net {
-		case "h2":
-			h2Opt.Path = vmessJson.Path
-			vmessJson.Path = ""
-		case "http":
-			httpOpt.Path = append(httpOpt.Path, vmessJson.Path)
-			vmessJson.Path = ""
-		}
+		//h2Opt := outbound.HTTP2Options{}
+		//httpOpt := outbound.HTTPOptions{}
 
 		v := Vmess{
-			Base: Base{
-				Name:   "",
-				Server: vmessJson.Add,
-				Port:   vmessJson.Port,
-				Type:   "vmess",
-				UDP:    false,
+			Type: "vmess",
+			VmessOption: outbound.VmessOption{
+				Server:         vmessJson.Add,
+				Port:           vmessJson.Port,
+				UDP:            false,
+				UUID:           vmessJson.Id,
+				AlterID:        alterId,
+				Cipher:         "auto",
+				Network:        vmessJson.Net,
+				ServerName:     vmessJson.SNI,
+				TLS:            tls,
+				SkipCertVerify: true,
+				Fingerprint:    vmessJson.Fp,
+				ALPN:           strings.Split(vmessJson.Alpn, ","),
 			},
-			UUID:           vmessJson.Id,
-			AlterID:        alterId,
-			Cipher:         "auto",
-			Network:        vmessJson.Net,
-			HTTPOpts:       httpOpt,
-			HTTP2Opts:      h2Opt,
-			ServerName:     vmessJson.Host,
-			TLS:            tls,
-			SkipCertVerify: true,
 		}
 
-		if v.Network == "ws" {
-			v.WSOpts = &WSOptions{
-				Path:    vmessJson.Path,
-				Headers: wsHeaders,
+		switch v.Network {
+		case "http":
+			if vmessJson.Path == "" {
+				vmessJson.Path = "/"
 			}
+			v.HTTPOpts.Method = "GET"
+			v.HTTPOpts.Path = append(v.HTTPOpts.Path, vmessJson.Path)
+		case "h2":
+			if vmessJson.Path == "" {
+				vmessJson.Path = "/"
+			}
+			if vmessJson.Host != "" {
+				v.HTTP2Opts.Host = append(v.HTTP2Opts.Host, vmessJson.Host)
+			}
+			v.HTTP2Opts.Path = vmessJson.Path
+
+		case "ws":
+			wsHeaders := make(map[string]string)
+			wsHeaders["HOST"] = vmessJson.Host
+			v.WSOpts.Path = vmessJson.Path
+			v.WSOpts.Headers = wsHeaders
 		}
 
 		return &v, nil

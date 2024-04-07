@@ -5,13 +5,13 @@
 <h5 align="center">自动抓取tg频道、订阅地址、公开互联网上的ss、ssr、vmess、trojan节点信息，聚合去重测试可用性后提供节点列表</h5>
 
 <p align="center">
-  <a href="https://github.com/ssrlive/proxypool/actions">
+  <a href="https://github.com/timerzz/proxypool/actions">
     <img src="https://img.shields.io/github/workflow/status/zu1k/proxypool/Go?style=flat-square" alt="Github Actions">
   </a>
-  <a href="https://goreportcard.com/report/github.com/ssrlive/proxypool">
-    <img src="https://goreportcard.com/badge/github.com/ssrlive/proxypool?style=flat-square">
+  <a href="https://goreportcard.com/report/github.com/timerzz/proxypool">
+    <img src="https://goreportcard.com/badge/github.com/timerzz/proxypool?style=flat-square">
   </a>
-  <a href="https://github.com/ssrlive/proxypool/releases">
+  <a href="https://github.com/timerzz/proxypool/releases">
     <img src="https://img.shields.io/github/release/zu1k/proxypool/all.svg?style=flat-square">
   </a>
 </p>
@@ -40,7 +40,7 @@
 
 > heroku app域名为appname.herokuapp.com。项目内配置文件为./config/config.yaml
 
-配置文件模板见 config/config.yaml 文件，可选项区域均可不填。完整配置选项请查看[配置文件说明](https://github.com/ssrlive/proxypool/wiki/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E)。
+配置文件模板见 config/config.yaml 文件，可选项区域均可不填。完整配置选项请查看[配置文件说明](https://github.com/timerzz/proxypool/wiki/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E)。
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -58,12 +58,12 @@
 需要 [安装 Golang](https://golang.org/doc/install) ， 然后拉取代码,
 
 ```bash
-go get -u -v github.com/ssrlive/proxypool@latest
+go get -u -v github.com/timerzz/proxypool@latest
 ```
 
 或者，拉取代码的另一种方式 
 ```
-git clone https://github.com/ssrlive/proxypool.git
+git clone https://github.com/timerzz/proxypool.git
 cd proxypool
 go get
 go build
@@ -79,7 +79,7 @@ go run main.go -c ./config/config.yaml
 
 ### 4. 下载预编译程序
 
-从这里下载预编译好的程序 [release](https://github.com/ssrlive/proxypool/releases)
+从这里下载预编译好的程序 [release](https://github.com/timerzz/proxypool/releases)
 
 ### 5. 使用docker
 
@@ -121,7 +121,7 @@ $ docker run -d --restart=always \
 
 source.yaml 文件中定义了抓取源，需要定期手动维护更新
 
-完整的配置选项见[配置文件说明](https://github.com/ssrlive/proxypool/wiki/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E)
+完整的配置选项见[配置文件说明](https://github.com/timerzz/proxypool/wiki/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E)
 
 ### 启动程序
 
@@ -131,7 +131,7 @@ source.yaml 文件中定义了抓取源，需要定期手动维护更新
 $ proxypool -c ./config/config.yaml
 ```
 
-如果需要部署到VPS，更多细节请[查看wiki](https://github.com/ssrlive/proxypool/wiki/%E9%83%A8%E7%BD%B2%E5%88%B0VPS-Step-by-Step)。
+如果需要部署到VPS，更多细节请[查看wiki](https://github.com/timerzz/proxypool/wiki/%E9%83%A8%E7%BD%B2%E5%88%B0VPS-Step-by-Step)。
 
 ## Clash配置文件
 
@@ -141,7 +141,7 @@ $ proxypool -c ./config/config.yaml
 
 ## 本地检查节点可用性
 
-此项非必须。为了提高实际可用性，可选择增加一个本地服务器，检测远程proxypool节点在本地的可用性并提供配置，见[proxypoolCheck](https://github.com/ssrlive/proxypoolCheck)。
+此项非必须。为了提高实际可用性，可选择增加一个本地服务器，检测远程proxypool节点在本地的可用性并提供配置，见[proxypoolCheck](https://github.com/timerzz/proxypoolCheck)。
 
 ## 截图
 

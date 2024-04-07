@@ -7,10 +7,10 @@ import (
 	"net"
 	"sync"
 
-	"github.com/Dreamacro/clash/adapter"
 	"github.com/ivpusic/grpool"
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	"github.com/metacubex/mihomo/adapter"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/proxy"
 )
 
 func RelayCheck(proxies proxy.ProxyList) {

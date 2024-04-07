@@ -3,8 +3,8 @@ package database
 import (
 	"time"
 
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/proxy"
 	"gorm.io/gorm"
 )
 
@@ -51,11 +51,11 @@ func SaveProxyList(pl proxy.ProxyList) {
 				Link:       pl[i].Link(),
 				Identifier: pl[i].Identifier(),
 			}
-			p.Useable = true
+			p.Usable = true
 			if err := DB.Create(&p).Error; err != nil {
 				// Update with Identifier
 				if uperr := DB.Model(&Proxy{}).Where("identifier = ?", p.Identifier).Updates(&Proxy{
-					Base: proxy.Base{Useable: true, Name: p.Name},
+					Base: proxy.Base{Usable: true, Name: p.Name},
 				}).Error; uperr != nil {
 					log.Warnln("\n\t\tdatabase: Update failed:"+
 						"\n\t\tdatabase: When Created item: %s"+
@@ -82,7 +82,7 @@ func GetAllProxies() (proxies proxy.ProxyList) {
 		if proxiesDB != nil {
 			p, err := proxy.ParseProxyFromLink(proxyDB.Link)
 			if err == nil && p != nil {
-				p.SetUseable(false)
+				p.SetUsable(false)
 				proxies = append(proxies, p)
 			}
 		}

@@ -3,7 +3,7 @@ package provider
 import (
 	"strings"
 
-	"github.com/ssrlive/proxypool/pkg/tool"
+	"github.com/timerzz/proxypool/pkg/tool"
 )
 
 type SSRSub struct {

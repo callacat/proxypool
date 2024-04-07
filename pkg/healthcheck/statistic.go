@@ -3,7 +3,7 @@ package healthcheck
 import (
 	"time"
 
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	"github.com/timerzz/proxypool/pkg/proxy"
 )
 
 // Statistic for a proxy

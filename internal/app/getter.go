@@ -4,14 +4,14 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/ssrlive/proxypool/log"
+	"github.com/timerzz/proxypool/log"
 
-	"github.com/ssrlive/proxypool/internal/cache"
+	"github.com/timerzz/proxypool/internal/cache"
 
 	"github.com/ghodss/yaml"
 
-	"github.com/ssrlive/proxypool/config"
-	"github.com/ssrlive/proxypool/pkg/getter"
+	"github.com/timerzz/proxypool/config"
+	"github.com/timerzz/proxypool/pkg/getter"
 )
 
 var Getters = make([]getter.Getter, 0)

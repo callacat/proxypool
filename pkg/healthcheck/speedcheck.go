@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Dreamacro/clash/adapter"
-	C "github.com/Dreamacro/clash/constant"
 	"github.com/ivpusic/grpool"
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	"github.com/metacubex/mihomo/adapter"
+	C "github.com/metacubex/mihomo/constant"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/proxy"
 )
 
 // SpeedTestAll tests speed of a group of proxies. Results are stored in ProxyStats

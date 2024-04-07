@@ -3,9 +3,10 @@ package proxy
 import (
 	"encoding/json"
 	"errors"
+	jsoniter "github.com/json-iterator/go"
 	"strings"
 
-	"github.com/ssrlive/proxypool/pkg/geoIp"
+	"github.com/timerzz/proxypool/pkg/geoIp"
 )
 
 /* Base implements interface Proxy. It's the basic proxy struct. Vmess etc extends Base*/
@@ -16,7 +17,7 @@ type Base struct {
 	Country string `yaml:"country,omitempty" json:"country,omitempty" gorm:"index"`
 	Port    int    `yaml:"port" json:"port" gorm:"index"`
 	UDP     bool   `yaml:"udp,omitempty" json:"udp,omitempty"`
-	Useable bool   `yaml:"useable,omitempty" json:"useable,omitempty" gorm:"index"`
+	Usable  bool   `yaml:"usable,omitempty" json:"usable,omitempty" gorm:"index"`
 }
 
 // TypeName() Get specific proxy type
@@ -56,9 +57,9 @@ func (b *Base) Clone() Base {
 	return c
 }
 
-// SetUseable() set Base info "Useable" (true or false)
-func (b *Base) SetUseable(useable bool) {
-	b.Useable = useable
+// SetUseable() set Base info "Usable" (true or false)
+func (b *Base) SetUsable(useable bool) {
+	b.Usable = useable
 }
 
 // SetUseable() set Base info "Country" (string)
@@ -69,7 +70,6 @@ func (b *Base) SetCountry(country string) {
 type Proxy interface {
 	String() string
 	ToClash() string
-	ToSurge() string
 	Link() string
 	Identifier() string
 	SetName(name string)
@@ -78,7 +78,7 @@ type Proxy interface {
 	TypeName() string //ss ssr vmess trojan
 	BaseInfo() *Base
 	Clone() Proxy
-	SetUseable(useable bool)
+	SetUsable(usable bool)
 	SetCountry(country string)
 }
 
@@ -130,7 +130,7 @@ func ParseProxyFromClashProxy(p map[string]interface{}) (proxy Proxy, err error)
 		return &proxy, nil
 	case "vmess":
 		var proxy Vmess
-		err := json.Unmarshal(pjson, &proxy)
+		err := jsoniter.Config{TagKey: "proxy"}.Froze().Unmarshal(pjson, &proxy)
 		if err != nil {
 			return nil, err
 		}

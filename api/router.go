@@ -10,16 +10,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ssrlive/proxypool/log"
+	"github.com/timerzz/proxypool/log"
 	"golang.org/x/exp/slices"
 
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
-	"github.com/ssrlive/proxypool/config"
-	appcache "github.com/ssrlive/proxypool/internal/cache"
-	"github.com/ssrlive/proxypool/pkg/provider"
+	"github.com/timerzz/proxypool/config"
+	appcache "github.com/timerzz/proxypool/internal/cache"
+	"github.com/timerzz/proxypool/pkg/provider"
 )
 
 const version = "v0.7.12"
@@ -137,53 +137,6 @@ func setupRouter() {
 				},
 			}
 			text = clash.Provide() // 根据Query筛选节点
-		}
-		c.String(200, text)
-	})
-	router.GET("/surge/proxies", func(c *gin.Context) {
-		proxyTypes := c.DefaultQuery("type", "")
-		proxyCountry := c.DefaultQuery("c", "")
-		proxyNotCountry := c.DefaultQuery("nc", "")
-		proxySpeed := c.DefaultQuery("speed", "")
-		proxyFilter := c.DefaultQuery("filter", "")
-		text := ""
-		if proxyTypes == "" && proxyCountry == "" && proxyNotCountry == "" && proxySpeed == "" {
-			text = appcache.GetString("surgeproxies") // A string. To show speed in this if condition, this must be updated after speedtest
-			if text == "" {
-				proxies := appcache.GetProxies("proxies")
-				surge := provider.Surge{
-					Base: provider.Base{
-						Proxies: &proxies,
-					},
-				}
-				text = surge.Provide()
-				appcache.SetString("surgeproxies", text)
-			}
-		} else if proxyTypes == "all" {
-			proxies := appcache.GetProxies("allproxies")
-			surge := provider.Surge{
-				Base: provider.Base{
-					Proxies:    &proxies,
-					Types:      proxyTypes,
-					Country:    proxyCountry,
-					NotCountry: proxyNotCountry,
-					Speed:      proxySpeed,
-					Filter:     proxyFilter,
-				},
-			}
-			text = surge.Provide()
-		} else {
-			proxies := appcache.GetProxies("proxies")
-			surge := provider.Surge{
-				Base: provider.Base{
-					Proxies:    &proxies,
-					Types:      proxyTypes,
-					Country:    proxyCountry,
-					NotCountry: proxyNotCountry,
-					Filter:     proxyFilter,
-				},
-			}
-			text = surge.Provide()
 		}
 		c.String(200, text)
 	})

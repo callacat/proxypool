@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/v2"
 )
 
 func GetColly() *colly.Collector {

@@ -5,14 +5,14 @@ import (
 	"sync"
 	"time"
 
-	C "github.com/ssrlive/proxypool/config"
-	"github.com/ssrlive/proxypool/internal/cache"
-	"github.com/ssrlive/proxypool/internal/database"
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/geoIp"
-	"github.com/ssrlive/proxypool/pkg/healthcheck"
-	"github.com/ssrlive/proxypool/pkg/provider"
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	C "github.com/timerzz/proxypool/config"
+	"github.com/timerzz/proxypool/internal/cache"
+	"github.com/timerzz/proxypool/internal/database"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/geoIp"
+	"github.com/timerzz/proxypool/pkg/healthcheck"
+	"github.com/timerzz/proxypool/pkg/provider"
+	"github.com/timerzz/proxypool/pkg/proxy"
 )
 
 var location, _ = time.LoadLocation("Asia/Shanghai")
@@ -62,6 +62,16 @@ func CrawlGo() {
 	}.CleanProxies()
 	log.Infoln("CrawlGo clash supported proxy count: %d", len(proxies))
 
+	// Health Check
+	log.Infoln("Now proceed proxy health check...")
+	healthcheck.SpeedConn = C.Config.SpeedConnection
+	healthcheck.DelayConn = C.Config.HealthCheckConnection
+	if C.Config.HealthCheckTimeout > 0 {
+		healthcheck.DelayTimeout = time.Second * time.Duration(C.Config.HealthCheckTimeout)
+		log.Infoln("CONF: Health check timeout is set to %d seconds", C.Config.HealthCheckTimeout)
+	}
+
+	proxies = healthcheck.CleanBadProxiesWithGrpool(proxies)
 	cache.SetProxies("allproxies", proxies)
 	cache.AllProxiesCount = proxies.Len()
 	log.Infoln("AllProxiesCount: %d", cache.AllProxiesCount)
@@ -74,17 +84,6 @@ func CrawlGo() {
 	cache.TrojanProxiesCount = proxies.TypeLen("trojan")
 	log.Infoln("TrojanProxiesCount: %d", cache.TrojanProxiesCount)
 	cache.LastCrawlTime = time.Now().In(location).Format("2006-01-02 15:04:05")
-
-	// Health Check
-	log.Infoln("Now proceed proxy health check...")
-	healthcheck.SpeedConn = C.Config.SpeedConnection
-	healthcheck.DelayConn = C.Config.HealthCheckConnection
-	if C.Config.HealthCheckTimeout > 0 {
-		healthcheck.DelayTimeout = time.Second * time.Duration(C.Config.HealthCheckTimeout)
-		log.Infoln("CONF: Health check timeout is set to %d seconds", C.Config.HealthCheckTimeout)
-	}
-
-	proxies = healthcheck.CleanBadProxiesWithGrpool(proxies)
 
 	// proxies = healthcheck.CleanBadProxies(proxies)
 
@@ -126,11 +125,6 @@ func CrawlGo() {
 			Proxies: &proxies,
 		},
 	}.Provide()) // update static string provider
-	cache.SetString("surgeproxies", provider.Surge{
-		Base: provider.Base{
-			Proxies: &proxies,
-		},
-	}.Provide())
 }
 
 // Speed test for new proxies

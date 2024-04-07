@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/metacubex/mihomo/adapter"
 	"io"
 	"net"
 	"net/http"
@@ -14,12 +15,10 @@ import (
 	"time"
 
 	"github.com/antchfx/htmlquery"
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/proxy"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/proxy"
 
 	"github.com/ivpusic/grpool"
-
-	"github.com/Dreamacro/clash/adapter"
 )
 
 func CleanBadProxiesWithGrpool(proxies []proxy.Proxy) (cproxies []proxy.Proxy) {
@@ -110,7 +109,7 @@ func testDelay(p proxy.Proxy) (delay time.Duration, err error) {
 	defer close(respC)
 	go func() {
 		sTime := time.Now()
-		err = HTTPHeadViaProxy(clashProxy, "http://www.gstatic.com/generate_204")
+		err = HTTPHeadViaProxy(clashProxy, "https://www.google.com")
 		respC <- struct {
 			time.Duration
 			error

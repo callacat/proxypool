@@ -3,14 +3,14 @@ package cron
 import (
 	"runtime"
 
-	"github.com/ssrlive/proxypool/config"
-	"github.com/ssrlive/proxypool/internal/cache"
-	"github.com/ssrlive/proxypool/log"
-	"github.com/ssrlive/proxypool/pkg/healthcheck"
-	"github.com/ssrlive/proxypool/pkg/provider"
+	"github.com/timerzz/proxypool/config"
+	"github.com/timerzz/proxypool/internal/cache"
+	"github.com/timerzz/proxypool/log"
+	"github.com/timerzz/proxypool/pkg/healthcheck"
+	"github.com/timerzz/proxypool/pkg/provider"
 
 	"github.com/jasonlvhit/gocron"
-	"github.com/ssrlive/proxypool/internal/app"
+	"github.com/timerzz/proxypool/internal/app"
 )
 
 func Cron() {
@@ -44,11 +44,6 @@ func speedTestTask() {
 			Proxies: &pl,
 		},
 	}.Provide()) // update static string provider
-	cache.SetString("surgeproxies", provider.Surge{
-		Base: provider.Base{
-			Proxies: &pl,
-		},
-	}.Provide())
 	runtime.GC()
 }
 
@@ -71,10 +66,5 @@ func frequentSpeedTestTask() {
 			Proxies: &pl_all,
 		},
 	}.Provide()) // update static string provider
-	cache.SetString("surgeproxies", provider.Surge{
-		Base: provider.Base{
-			Proxies: &pl_all,
-		},
-	}.Provide())
 	runtime.GC()
 }
