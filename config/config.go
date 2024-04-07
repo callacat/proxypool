@@ -22,6 +22,7 @@ type ConfigOptions struct {
 	Domain                string   `json:"domain" yaml:"domain"`
 	Port                  string   `json:"port" yaml:"port"`
 	DatabaseUrl           string   `json:"database_url" yaml:"database_url"`
+	DatabaseType          string   `json:"database_type" yaml:"database_type"` //数据库类型，支持pg和sqlite
 	CrawlInterval         uint64   `json:"crawl-interval" yaml:"crawl-interval"`
 	CFEmail               string   `json:"cf_email" yaml:"cf_email"`
 	CFKey                 string   `json:"cf_key" yaml:"cf_key"`

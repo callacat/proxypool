@@ -8,6 +8,7 @@ import (
 	"github.com/timerzz/proxypool/config"
 
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -16,14 +17,23 @@ var DB *gorm.DB
 
 func connect() (err error) {
 	// localhost url
-	dsn := "user=proxypool password=proxypool dbname=proxypool port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "proxypool.db?_pragma=busy_timeout(5000)"
+	if config.Config.DatabaseType == "pgsql" {
+		dsn = "user=proxypool password=proxypool dbname=proxypool port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	}
 	if url := config.Config.DatabaseUrl; url != "" {
 		dsn = url
 	}
 	if url := os.Getenv("DATABASE_URL"); url != "" {
 		dsn = url
 	}
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+	var dialector gorm.Dialector
+	if config.Config.DatabaseType == "pgsql" {
+		dialector = postgres.Open(dsn)
+	} else {
+		dialector = sqlite.Open(dsn)
+	}
+	DB, err = gorm.Open(dialector, &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err == nil {

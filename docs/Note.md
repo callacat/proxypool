@@ -75,7 +75,7 @@ dsn := "user=proxypool password=proxypool dbname=proxypool port=5432 sslmode=dis
 
 程序运行时建立会proxies表。每次运行时读出节点，爬虫完成后再存储可用的节点进去。
 
-更新时会Update所有数据库上次可用节点的usable为false（此时useable全是false），然后存储新节点，已有的条目则Update usable。最后再自动清除7天未更新且不可用的节点。
+更新时会Update所有数据库上次可用节点的usable为false（此时usable全是false），然后存储新节点，已有的条目则Update usable。最后再自动清除7天未更新且不可用的节点。
 
 重点在于，失效的条目不能更新。
 

@@ -58,8 +58,8 @@ func (b *Base) Clone() Base {
 }
 
 // SetUseable() set Base info "Usable" (true or false)
-func (b *Base) SetUsable(useable bool) {
-	b.Usable = useable
+func (b *Base) SetUsable(usable bool) {
+	b.Usable = usable
 }
 
 // SetUseable() set Base info "Country" (string)

@@ -41,8 +41,8 @@ func SaveProxyList(pl proxy.ProxyList) {
 
 	DB.Transaction(func(tx *gorm.DB) error {
 		// Set All Usable to false
-		if err := DB.Model(&Proxy{}).Where("useable = ?", true).Update("useable", "false").Error; err != nil {
-			log.Warnln("database: Reset useable to false failed: %s", err.Error())
+		if err := DB.Model(&Proxy{}).Where("usable = ?", true).Update("usable", "false").Error; err != nil {
+			log.Warnln("database: Reset usable to false failed: %s", err.Error())
 		}
 		// Create or Update proxies
 		for i := 0; i < pl.Len(); i++ {
@@ -96,9 +96,9 @@ func ClearOldItems() {
 		return
 	}
 	lastWeek := time.Now().Add(-time.Hour * 24 * 7)
-	if err := DB.Where("updated_at < ? AND useable = ?", lastWeek, false).Delete(&Proxy{}); err != nil {
+	if err := DB.Where("updated_at < ? AND usable = ?", lastWeek, false).Delete(&Proxy{}); err != nil {
 		var count int64
-		DB.Model(&Proxy{}).Where("updated_at < ? AND useable = ?", lastWeek, false).Count(&count)
+		DB.Model(&Proxy{}).Where("updated_at < ? AND usable = ?", lastWeek, false).Count(&count)
 		if count == 0 {
 			log.Infoln("database: Nothing old to sweep") // TODO always this line?
 		} else {
