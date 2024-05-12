@@ -9,7 +9,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/cache v1.2.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/glebarez/sqlite v1.11.0
+	github.com/glebarez/sqlite v1.10.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/heroku/x v0.0.59
 	github.com/ivpusic/grpool v1.0.0
@@ -25,7 +25,7 @@ require (
 	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
-	gorm.io/gorm v1.25.9
+	gorm.io/gorm v1.25.5
 )
 
 require (
