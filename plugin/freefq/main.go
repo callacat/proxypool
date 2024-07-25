@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/gocolly/colly/v2"
-	"golang.org/x/text/encoding/simplifiedchinese"
 	"net/url"
 	"slices"
 	"strings"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 // 从https://www.freefq.com/获取分享链接的插件

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/metacubex/mihomo/adapter"
 	"io"
 	"net"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/metacubex/mihomo/adapter"
 
 	"github.com/antchfx/htmlquery"
 	"github.com/timerzz/proxypool/log"
@@ -109,7 +110,7 @@ func testDelay(p proxy.Proxy) (delay time.Duration, err error) {
 	defer close(respC)
 	go func() {
 		sTime := time.Now()
-		err = HTTPHeadViaProxy(clashProxy, "https://www.google.com")
+		err = HTTPHeadViaProxy(clashProxy, "https://www.coachoutlet.com")
 		respC <- struct {
 			time.Duration
 			error
