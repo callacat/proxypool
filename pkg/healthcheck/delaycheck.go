@@ -110,7 +110,7 @@ func testDelay(p proxy.Proxy) (delay time.Duration, err error) {
 	defer close(respC)
 	go func() {
 		sTime := time.Now()
-		err = HTTPHeadViaProxy(clashProxy, "https://www.coachoutlet.com")
+		err = HTTPHeadViaProxy(clashProxy, "https://www.coachoutlet.com/api/get-shop/bags/view-all")
 		respC <- struct {
 			time.Duration
 			error

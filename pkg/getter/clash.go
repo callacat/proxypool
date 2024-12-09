@@ -2,10 +2,12 @@ package getter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/timerzz/proxypool/log"
 	"github.com/timerzz/proxypool/pkg/proxy"
@@ -18,7 +20,8 @@ func init() {
 }
 
 type Clash struct {
-	Url string
+	Url        string
+	DateFormat bool
 }
 
 type config struct {
@@ -26,7 +29,12 @@ type config struct {
 }
 
 func (c *Clash) Get() proxy.ProxyList {
-	resp, err := tool.GetHttpClient().Get(c.Url)
+	url := c.Url
+	if c.DateFormat {
+		url = time.Now().Format(url)
+	}
+	fmt.Printf("fetching %s\n", url)
+	resp, err := tool.GetHttpClient().Get(url)
 	if err != nil {
 		return nil
 	}
@@ -106,8 +114,13 @@ func NewClashGetter(options tool.Options) (getter Getter, err error) {
 		if err != nil {
 			return nil, err
 		}
+		var dateFormat bool
+		if options["dateFormat"] == true {
+			dateFormat = true
+		}
 		return &Clash{
-			Url: url,
+			Url:        url,
+			DateFormat: dateFormat,
 		}, nil
 	}
 	return nil, ErrorUrlNotFound

@@ -3,14 +3,15 @@ package healthcheck
 import (
 	"context"
 	"fmt"
-	C "github.com/metacubex/mihomo/constant"
-	"github.com/timerzz/proxypool/pkg/proxy"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	C "github.com/metacubex/mihomo/constant"
+	"github.com/timerzz/proxypool/pkg/proxy"
 )
 
 // DO NOT EDIT. Copied from clash because it's an unexported function
@@ -102,7 +103,7 @@ func HTTPHeadViaProxy(clashProxy C.Proxy, url string) error {
 	}
 	defer conn.Close()
 
-	req, err := http.NewRequest(http.MethodHead, url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return err
 	}
@@ -121,7 +122,16 @@ func HTTPHeadViaProxy(clashProxy C.Proxy, url string) error {
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
 	}
-
+	req.Header = http.Header{
+		"User-Agent":                []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"},
+		"sec-fetch-site":            []string{"same-origin"},
+		"upgrade-insecure-requests": []string{"1"},
+		"sec-fetch-dest":            []string{"empty"},
+		"sec-fetch-mode":            []string{"navigate"},
+		"Accept":                    []string{"*/*"},
+		"Accept-Encoding":           []string{"gzip, deflate, br"},
+		"Connection":                []string{"keep-alive"},
+	}
 	client := http.Client{
 		Transport: transport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -132,7 +142,7 @@ func HTTPHeadViaProxy(clashProxy C.Proxy, url string) error {
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode != 200 {
 		return fmt.Errorf("%d %s for proxy %s %s", resp.StatusCode, resp.Status, clashProxy.Name(), clashProxy.Addr())
 	}
 	resp.Body.Close()

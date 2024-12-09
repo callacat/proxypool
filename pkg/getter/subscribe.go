@@ -4,6 +4,7 @@ import (
 	"io"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/timerzz/proxypool/log"
 
@@ -18,11 +19,16 @@ func init() {
 
 // Subscribe is A Getter with an additional property
 type Subscribe struct {
-	Url string
+	Url        string
+	DateFormat bool
 }
 
 // Get() of Subscribe is to implement Getter interface
 func (s *Subscribe) Get() proxy.ProxyList {
+	url := s.Url
+	if s.DateFormat {
+		url = time.Now().Format(url)
+	}
 	resp, err := tool.GetHttpClient().Get(s.Url)
 	if err != nil {
 		return nil
@@ -60,8 +66,13 @@ func NewSubscribe(options tool.Options) (getter Getter, err error) {
 		if err != nil {
 			return nil, err
 		}
+		var dateFormat bool
+		if options["dateFormat"] == true {
+			dateFormat = true
+		}
 		return &Subscribe{
-			Url: url,
+			Url:        url,
+			DateFormat: dateFormat,
 		}, nil
 	}
 	return nil, ErrorUrlNotFound
